@@ -1,27 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #fff8ef;
-  --bg-elevated: #fff0de;
-  --fg: #1f1710;
-  --muted: #7e6656;
-  --panel: #fffdf8;
-  --outline: #e5c9ad;
+  --bg: #fffdf9;
+  --bg-elevated: #fff7ef;
+  --fg: #1b140e;
+  --muted: #6c5a4b;
+  --panel: #ffffff;
+  --outline: #ead8c6;
 
-  --brand: #f26b27;
-  --brand-foreground: #ffffff;
+  --brand: #ea6422;
+  --brand-foreground: #fffaf4;
 
-  --accent: #f6b31f;
-  --accent-foreground: #332003;
+  --accent: #f2b239;
+  --accent-foreground: #3a2709;
 
-  --success: #1c7e48;
-  --success-soft: #d8f4e4;
+  --success: #177a46;
+  --success-soft: #d8f2e3;
 
-  --warning: #915b14;
-  --warning-soft: #fce9c9;
+  --warning: #905713;
+  --warning-soft: #fce9c8;
 
-  --danger: #b33c3c;
-  --danger-soft: #fde0e0;
+  --danger: #b64242;
+  --danger-soft: #fde2e2;
+
+  --page-backdrop:
+    radial-gradient(circle at 11% 6%, rgba(255, 178, 119, 0.28), transparent 40%),
+    radial-gradient(circle at 88% 0%, rgba(255, 229, 171, 0.32), transparent 42%),
+    radial-gradient(circle at 35% 96%, rgba(255, 205, 148, 0.18), transparent 44%),
+    linear-gradient(125deg, #fffefb 0%, #fff9f1 48%, #fff4e8 100%);
+  --shadow-soft: 0 14px 34px rgba(148, 88, 32, 0.14);
+  color-scheme: light;
 }
 
 @theme inline {
@@ -49,33 +57,42 @@
 }
 
 .dark {
-  --bg: #111012;
-  --bg-elevated: #18161b;
-  --fg: #f8f1e8;
-  --muted: #b5a89a;
-  --panel: #1b171d;
-  --outline: #3a2f2a;
+  --bg: #121015;
+  --bg-elevated: #1a1620;
+  --fg: #f6efe7;
+  --muted: #b6aa9f;
+  --panel: #201a24;
+  --outline: #3d3138;
 
-  --brand: #ff9150;
-  --brand-foreground: #22120a;
+  --brand: #ff985d;
+  --brand-foreground: #2a150b;
 
-  --accent: #ffd173;
-  --accent-foreground: #2c230f;
+  --accent: #ffd27f;
+  --accent-foreground: #2f240f;
 
-  --success: #63d68f;
-  --success-soft: #183325;
+  --success: #68d695;
+  --success-soft: #173327;
 
-  --warning: #ffc168;
+  --warning: #ffc67a;
   --warning-soft: #3a2910;
 
-  --danger: #ff8f8f;
-  --danger-soft: #3e1d1d;
+  --danger: #ff9494;
+  --danger-soft: #3f1d1d;
+
+  --page-backdrop:
+    radial-gradient(circle at 11% 8%, rgba(255, 146, 86, 0.18), transparent 40%),
+    radial-gradient(circle at 88% 0%, rgba(255, 199, 121, 0.13), transparent 43%),
+    radial-gradient(circle at 28% 92%, rgba(230, 120, 80, 0.09), transparent 45%),
+    linear-gradient(125deg, #121015 0%, #18131b 52%, #1f1713 100%);
+  --shadow-soft: 0 16px 40px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-body), sans-serif;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -84,19 +101,23 @@ body {
 }
 
 .shadow-soft {
-  box-shadow: 0 12px 35px rgba(166, 98, 39, 0.12);
+  box-shadow: var(--shadow-soft);
+}
+
+.app-backdrop {
+  background: var(--page-backdrop);
 }
 
 .hero-mesh {
   background:
-    radial-gradient(circle at 16% 18%, rgba(255, 140, 71, 0.22), transparent 45%),
-    radial-gradient(circle at 85% 0%, rgba(255, 219, 151, 0.25), transparent 42%),
-    linear-gradient(140deg, rgba(255, 255, 255, 0.68), rgba(255, 247, 234, 0.5));
+    radial-gradient(circle at 16% 18%, rgba(255, 140, 71, 0.2), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(255, 219, 151, 0.22), transparent 42%),
+    linear-gradient(140deg, rgba(255, 255, 255, 0.82), rgba(255, 246, 232, 0.7));
 }
 
 .dark .hero-mesh {
   background:
-    radial-gradient(circle at 16% 18%, rgba(255, 147, 79, 0.18), transparent 45%),
-    radial-gradient(circle at 85% 0%, rgba(255, 200, 119, 0.13), transparent 42%),
-    linear-gradient(140deg, rgba(26, 21, 17, 0.75), rgba(19, 16, 21, 0.72));
+    radial-gradient(circle at 16% 18%, rgba(255, 147, 79, 0.17), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(255, 200, 119, 0.12), transparent 42%),
+    linear-gradient(140deg, rgba(34, 26, 22, 0.76), rgba(23, 18, 25, 0.74));
 }
