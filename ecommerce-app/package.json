@@ -1,0 +1,27 @@
+{
+  "name": "ecommerce-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Top-class e-commerce monorepo (Next.js + NestJS + shared types)",
+  "scripts": {
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run start:dev --workspace backend",
+    "build:frontend": "npm run build --workspace frontend",
+    "build:backend": "npm run build --workspace backend",
+    "lint:frontend": "npm run lint --workspace frontend",
+    "test:backend": "npm run test --workspace backend"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "keywords": [
+    "ecommerce",
+    "monorepo",
+    "nextjs",
+    "nestjs"
+  ],
+  "author": "",
+  "license": "MIT"
+}

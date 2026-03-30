@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fff8ef;
+  --bg-elevated: #fff0de;
+  --fg: #1f1710;
+  --muted: #7e6656;
+  --panel: #fffdf8;
+  --outline: #e5c9ad;
+
+  --brand: #f26b27;
+  --brand-foreground: #ffffff;
+
+  --accent: #f6b31f;
+  --accent-foreground: #332003;
+
+  --success: #1c7e48;
+  --success-soft: #d8f4e4;
+
+  --warning: #915b14;
+  --warning-soft: #fce9c9;
+
+  --danger: #b33c3c;
+  --danger-soft: #fde0e0;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-panel: var(--panel);
+  --color-outline: var(--outline);
+
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+.dark {
+  --bg: #111012;
+  --bg-elevated: #18161b;
+  --fg: #f8f1e8;
+  --muted: #b5a89a;
+  --panel: #1b171d;
+  --outline: #3a2f2a;
+
+  --brand: #ff9150;
+  --brand-foreground: #22120a;
+
+  --accent: #ffd173;
+  --accent-foreground: #2c230f;
+
+  --success: #63d68f;
+  --success-soft: #183325;
+
+  --warning: #ffc168;
+  --warning-soft: #3a2910;
+
+  --danger: #ff8f8f;
+  --danger-soft: #3e1d1d;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body), sans-serif;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--brand) 36%, white 0%);
+  color: var(--fg);
+}
+
+.shadow-soft {
+  box-shadow: 0 12px 35px rgba(166, 98, 39, 0.12);
+}
+
+.hero-mesh {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 140, 71, 0.22), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(255, 219, 151, 0.25), transparent 42%),
+    linear-gradient(140deg, rgba(255, 255, 255, 0.68), rgba(255, 247, 234, 0.5));
+}
+
+.dark .hero-mesh {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255, 147, 79, 0.18), transparent 45%),
+    radial-gradient(circle at 85% 0%, rgba(255, 200, 119, 0.13), transparent 42%),
+    linear-gradient(140deg, rgba(26, 21, 17, 0.75), rgba(19, 16, 21, 0.72));
+}
