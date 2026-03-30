@@ -3,12 +3,14 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import type { Request, Response } from 'express';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { CustomerJwtGuard } from '../common/guards/customer-jwt.guard';
@@ -44,6 +46,7 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle({ default: { limit: 10, ttl: 900_000 } })
   async register(
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) response: Response,
@@ -57,6 +60,8 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 900_000 } })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) response: Response) {
     const result = await this.authService.login(dto);
     this.setAuthCookies(response, result.tokens.accessToken, result.tokens.refreshToken);
@@ -105,6 +110,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @Throttle({ default: { limit: 10, ttl: 900_000 } })
   forgotPassword(@Body() dto: ForgotPasswordDto) {
     return this.authService.forgotPassword(dto);
   }

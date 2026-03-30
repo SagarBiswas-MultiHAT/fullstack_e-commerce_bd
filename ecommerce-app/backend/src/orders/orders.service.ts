@@ -213,6 +213,24 @@ export class OrdersService {
     };
   }
 
+  async getOrderByIdForAdmin(orderId: string) {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: {
+        customer: true,
+        items: {
+          product: true,
+        },
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    return order;
+  }
+
   async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto) {
     const order = await this.orderRepository.findOneBy({ id: orderId });
 
@@ -223,6 +241,7 @@ export class OrdersService {
     const previousStatus = order.status;
     order.status = dto.status;
     const saved = await this.orderRepository.save(order);
+    this.logger.log(`Order status updated: ${saved.id} ${previousStatus} -> ${saved.status}`);
 
     if (
       previousStatus !== saved.status &&
@@ -265,6 +284,7 @@ export class OrdersService {
     }
 
     order.status = OrderStatus.CANCELLED;
+    this.logger.warn(`Order marked as failed/cancelled: ${order.id}`);
     return this.orderRepository.save(order);
   }
 
@@ -320,6 +340,7 @@ export class OrdersService {
 
     order.status = OrderStatus.PAID;
     order.paymentReference = paymentReference;
+    this.logger.log(`Order finalized as paid: ${order.id}`);
 
     return this.orderRepository.save(order);
   }

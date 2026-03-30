@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminJwtGuard } from '../common/guards/admin-jwt.guard';
 import { CustomerJwtGuard } from '../common/guards/customer-jwt.guard';
+import { IpWhitelistGuard } from '../common/guards/ip-whitelist.guard';
 import { OrderItem } from '../entities/order-item.entity';
 import { Product } from '../entities/product.entity';
 import { Review } from '../entities/review.entity';
@@ -11,6 +12,6 @@ import { ReviewsService } from './reviews.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Review, OrderItem, Product])],
   controllers: [ReviewsController],
-  providers: [ReviewsService, AdminJwtGuard, CustomerJwtGuard],
+  providers: [ReviewsService, AdminJwtGuard, CustomerJwtGuard, IpWhitelistGuard],
 })
 export class ReviewsModule {}

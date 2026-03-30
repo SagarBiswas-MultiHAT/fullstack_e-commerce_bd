@@ -1,5 +1,7 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -14,6 +16,8 @@ export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
     private readonly searchService: SearchService,
   ) {}
 
@@ -75,6 +79,33 @@ export class ProductsService {
     };
   }
 
+  async listProductsForAdmin(page = 1, limit = 20, search = '') {
+    const qb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .orderBy('product.created_at', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    if (search.trim()) {
+      qb.andWhere('LOWER(product.title) LIKE :query', {
+        query: `%${search.trim().toLowerCase()}%`,
+      });
+    }
+
+    const [items, total] = await qb.getManyAndCount();
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   async getProductBySlug(slug: string) {
     const product = await this.productRepository.findOne({
       where: { slug, isActive: true },
@@ -106,6 +137,8 @@ export class ProductsService {
     });
 
     const savedProduct = await this.productRepository.save(product);
+    await this.invalidatePublicCache();
+    this.logger.log(`Product created: ${savedProduct.id}`);
 
     this.searchService.indexProduct(savedProduct.id).catch((error: unknown) => {
       this.logger.warn(
@@ -137,6 +170,8 @@ export class ProductsService {
     if (dto.categoryId !== undefined) product.categoryId = dto.categoryId;
 
     const savedProduct = await this.productRepository.save(product);
+    await this.invalidatePublicCache();
+    this.logger.log(`Product updated: ${savedProduct.id}`);
 
     this.searchService.indexProduct(savedProduct.id).catch((error: unknown) => {
       this.logger.warn(
@@ -157,6 +192,8 @@ export class ProductsService {
 
     product.isActive = false;
     const savedProduct = await this.productRepository.save(product);
+    await this.invalidatePublicCache();
+    this.logger.log(`Product soft-deleted: ${savedProduct.id}`);
 
     this.searchService.removeProduct(savedProduct.id).catch((error: unknown) => {
       this.logger.warn(
@@ -170,5 +207,16 @@ export class ProductsService {
 
   private toMoneyString(value: number): string {
     return Number(value).toFixed(2);
+  }
+
+  private async invalidatePublicCache() {
+    try {
+      await this.cacheManager.clear();
+    } catch (error) {
+      this.logger.warn(
+        'Failed to reset cache after product mutation.',
+        error instanceof Error ? error.stack : undefined,
+      );
+    }
   }
 }

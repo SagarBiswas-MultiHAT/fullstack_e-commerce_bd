@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "set-in-vercel",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "set-in-vercel",
+    "NEXT_PUBLIC_GA_MEASUREMENT_ID": "set-in-vercel",
+    "NEXT_PUBLIC_MEILISEARCH_URL": "set-in-vercel",
+    "NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY": "set-in-vercel"
+  }
+}

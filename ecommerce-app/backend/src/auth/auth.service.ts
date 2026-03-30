@@ -67,6 +67,8 @@ export class AuthService {
     const savedCustomer = await this.customerRepository.save(customer);
     const tokens = await this.issueTokenPair(savedCustomer);
 
+    this.logger.log(`Customer registered: ${savedCustomer.email}`);
+
     this.emailService.sendWelcomeEmail(savedCustomer).catch((error: unknown) => {
       this.logger.warn(
         `Welcome email failed for ${savedCustomer.email}`,
@@ -86,10 +88,12 @@ export class AuthService {
     });
 
     if (!customer) {
+      this.logger.warn(`Login failed for unknown email: ${dto.email.toLowerCase()}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
     if (customer.lockedUntil && customer.lockedUntil.getTime() > Date.now()) {
+      this.logger.warn(`Login blocked for locked account: ${customer.email}`);
       throw new HttpException('Account is temporarily locked', HttpStatus.TOO_MANY_REQUESTS);
     }
 
@@ -103,6 +107,7 @@ export class AuthService {
       }
 
       await this.customerRepository.save(customer);
+      this.logger.warn(`Login failed for customer: ${customer.email}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -111,6 +116,8 @@ export class AuthService {
     await this.customerRepository.save(customer);
 
     const tokens = await this.issueTokenPair(customer);
+
+    this.logger.log(`Login success for customer: ${customer.email}`);
 
     return {
       customer: this.safeCustomer(customer),
@@ -133,6 +140,7 @@ export class AuthService {
 
     tokenEntry.isRevoked = true;
     await this.refreshTokenRepository.save(tokenEntry);
+    this.logger.log(`Refresh token revoked for customer: ${tokenEntry.customerId}`);
 
     return { success: true };
   }
@@ -178,6 +186,8 @@ export class AuthService {
     await this.refreshTokenRepository.save(tokenEntry);
 
     const tokens = await this.issueTokenPair(customer);
+
+    this.logger.log(`Session refreshed for customer: ${customer.email}`);
 
     return {
       customer: this.safeCustomer(customer),
@@ -252,6 +262,8 @@ export class AuthService {
       .set({ isRevoked: true })
       .where('customer_id = :customerId', { customerId: customer.id })
       .execute();
+
+    this.logger.log(`Password reset completed for customer: ${customer.email}`);
 
     return {
       message: 'Password reset successful',

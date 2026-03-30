@@ -55,12 +55,15 @@ export class StripeService {
       webhookSecret,
     );
 
+    this.logger.log(`Stripe webhook received: ${event.type}`);
+
     if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       const orderId = paymentIntent.metadata?.orderId;
 
       if (orderId) {
         const paidOrder = await this.ordersService.finalizePaidOrder(orderId, paymentIntent.id);
+        this.logger.log(`Stripe payment succeeded for order ${orderId}`);
 
         if (paidOrder.customer?.email) {
           this.emailService
@@ -81,6 +84,7 @@ export class StripeService {
 
       if (orderId) {
         await this.ordersService.markAsFailed(orderId);
+        this.logger.warn(`Stripe payment failed for order ${orderId}`);
       }
     }
 

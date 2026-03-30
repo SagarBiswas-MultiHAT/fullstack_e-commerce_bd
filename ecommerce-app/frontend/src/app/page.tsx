@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { CountdownTimer } from '@/components/CountdownTimer';
 import { EmptyState } from '@/components/EmptyState';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ProductCard } from '@/components/ProductCard';
 import { RecentlyViewedSection } from '@/components/RecentlyViewedSection';
 import { flattenCategories, getCategoryTree, getProducts } from '@/lib/store-data';
@@ -14,7 +16,7 @@ const fallbackCategories = [
   { id: '6', name: 'Accessories', slug: 'accessories' },
 ];
 
-export default async function HomePage() {
+async function HomePageContent() {
   const [categoryTree, trending, flashDeals] = await Promise.all([
     getCategoryTree(),
     getProducts({ sort: 'popular', limit: 12 }),
@@ -40,12 +42,14 @@ export default async function HomePage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/products"
+                prefetch={true}
                 className="rounded-full bg-fg px-6 py-3 text-sm font-semibold text-bg transition hover:opacity-90"
               >
                 Shop Collection
               </Link>
               <Link
                 href="/search"
+                prefetch={true}
                 className="rounded-full border border-outline bg-panel px-6 py-3 text-sm font-semibold text-fg transition hover:border-fg/50"
               >
                 Explore by Search
@@ -76,7 +80,7 @@ export default async function HomePage() {
             <p className="text-xs uppercase tracking-[0.2em] text-brand">Categories</p>
             <h2 className="font-display text-2xl font-semibold text-fg">Featured Picks</h2>
           </div>
-          <Link href="/products" className="text-sm font-medium text-fg underline-offset-4 hover:underline">
+          <Link href="/products" prefetch={true} className="text-sm font-medium text-fg underline-offset-4 hover:underline">
             View all
           </Link>
         </div>
@@ -85,6 +89,7 @@ export default async function HomePage() {
             <Link
               key={category.id}
               href={`/products?category=${encodeURIComponent(category.slug)}`}
+              prefetch={true}
               className="group rounded-2xl border border-outline bg-panel px-4 py-5 text-center transition hover:-translate-y-1 hover:border-fg/40"
             >
               <p className="text-sm font-semibold text-fg group-hover:text-brand">{category.name}</p>
@@ -99,15 +104,15 @@ export default async function HomePage() {
             <p className="text-xs uppercase tracking-[0.2em] text-brand">Popular</p>
             <h2 className="font-display text-2xl font-semibold text-fg">Trending Products</h2>
           </div>
-          <Link href="/products?sort=popular" className="text-sm font-medium text-fg underline-offset-4 hover:underline">
+          <Link href="/products?sort=popular" prefetch={true} className="text-sm font-medium text-fg underline-offset-4 hover:underline">
             Browse popular
           </Link>
         </div>
 
         {trending.items.length ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {trending.items.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {trending.items.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
         ) : (
@@ -130,8 +135,8 @@ export default async function HomePage() {
         </div>
         {flashDeals.items.length ? (
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {flashDeals.items.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {flashDeals.items.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 2} />
             ))}
           </div>
         ) : null}
@@ -145,5 +150,13 @@ export default async function HomePage() {
         <RecentlyViewedSection />
       </section>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<LoadingSkeleton count={8} />}>
+      <HomePageContent />
+    </Suspense>
   );
 }

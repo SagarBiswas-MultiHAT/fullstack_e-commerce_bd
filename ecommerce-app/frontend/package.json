@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000", 
+    "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "jest"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^6.0.0",
@@ -16,16 +17,24 @@
     "next-themes": "^0.4.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-image-magnifiers": "^1.4.0"
+    "react-image-magnifiers": "^1.4.0",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

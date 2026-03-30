@@ -12,6 +12,7 @@ function IconButton({ children, label, href }: { children: React.ReactNode; labe
   return (
     <Link
       href={href}
+      prefetch={true}
       aria-label={label}
       className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-outline bg-panel text-fg transition hover:-translate-y-0.5 hover:border-fg/60"
     >
@@ -29,7 +30,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-outline/80 bg-bg/90 backdrop-blur-lg">
       <div className="mx-auto flex w-[85%] items-center gap-3 px-4 py-3 lg:px-6">
-        <Link href="/" className="shrink-0 rounded-xl px-2 py-1 transition hover:bg-bg-elevated">
+        <Link href="/" prefetch={true} className="shrink-0 rounded-xl px-2 py-1 transition hover:bg-bg-elevated">
           <p className="font-display text-xl font-semibold text-fg">
             Bazaar<span className="text-brand">Flow</span>
           </p>
@@ -85,6 +86,7 @@ export function SiteHeader() {
                     </div>
                     <Link
                       href="/account"
+                      prefetch={true}
                       className="block rounded-xl px-3 py-2 text-sm text-fg transition hover:bg-bg-elevated"
                     >
                       Account
@@ -103,12 +105,14 @@ export function SiteHeader() {
                   <>
                     <Link
                       href="/auth/login"
+                      prefetch={true}
                       className="block rounded-xl px-3 py-2 text-sm text-fg transition hover:bg-bg-elevated"
                     >
                       Login
                     </Link>
                     <Link
                       href="/auth/register"
+                      prefetch={true}
                       className="mt-1 block rounded-xl px-3 py-2 text-sm text-fg transition hover:bg-bg-elevated"
                     >
                       Register

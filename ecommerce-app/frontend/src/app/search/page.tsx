@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/EmptyState';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Pagination } from '@/components/Pagination';
 import { ProductCard } from '@/components/ProductCard';
 import {
@@ -63,7 +65,7 @@ function buildHref(searchParams: SearchParams, page: number) {
   return `/search?${params.toString()}`;
 }
 
-export default async function SearchPage({
+async function SearchPageContent({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
@@ -243,6 +245,7 @@ export default async function SearchPage({
             </button>
             <Link
               href="/search"
+              prefetch={true}
               className="inline-flex items-center justify-center rounded-xl border border-outline px-4 py-2.5 text-sm font-semibold text-fg"
             >
               Reset
@@ -279,8 +282,8 @@ export default async function SearchPage({
 
         {products.length ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
         ) : (
@@ -299,5 +302,17 @@ export default async function SearchPage({
         />
       </section>
     </div>
+  );
+}
+
+export default function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  return (
+    <Suspense fallback={<LoadingSkeleton count={9} />}>
+      <SearchPageContent searchParams={searchParams} />
+    </Suspense>
   );
 }

@@ -11,9 +11,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AdminJwtGuard } from '../common/guards/admin-jwt.guard';
 import { CustomerJwtGuard } from '../common/guards/customer-jwt.guard';
+import { IpWhitelistGuard } from '../common/guards/ip-whitelist.guard';
 import { OrderStatus } from '../entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
@@ -49,7 +51,8 @@ export class OrdersController {
   }
 
   @Get('admin/orders')
-  @UseGuards(AdminJwtGuard)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
   getAllOrders(
     @Query('status') status?: OrderStatus,
     @Query('page', new ParseIntPipe({ optional: true })) page = 1,
@@ -58,8 +61,16 @@ export class OrdersController {
     return this.ordersService.getAllOrders(status, page, limit);
   }
 
+  @Get('admin/orders/:id')
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
+  getOrderByIdForAdmin(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.ordersService.getOrderByIdForAdmin(id);
+  }
+
   @Put('admin/orders/:id/status')
-  @UseGuards(AdminJwtGuard)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
   updateOrderStatus(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateOrderStatusDto,

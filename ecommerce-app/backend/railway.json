@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "deploy": {
+    "startCommand": "node dist/main.js",
+    "healthcheckPath": "/health",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

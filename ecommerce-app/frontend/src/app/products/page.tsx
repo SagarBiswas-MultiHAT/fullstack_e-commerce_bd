@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/EmptyState';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Pagination } from '@/components/Pagination';
 import { ProductCard } from '@/components/ProductCard';
 import { flattenCategories, getCategoryTree, getProducts } from '@/lib/store-data';
@@ -62,7 +64,7 @@ function createQueryString(searchParams: SearchParams, page: number) {
   return `/products?${params.toString()}`;
 }
 
-export default async function ProductsPage({
+async function ProductsPageContent({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
@@ -210,6 +212,7 @@ export default async function ProductsPage({
             </button>
             <Link
               href="/products"
+              prefetch={true}
               className="inline-flex items-center justify-center rounded-xl border border-outline px-4 py-2.5 text-sm font-semibold text-fg transition hover:border-fg/50"
             >
               Reset
@@ -251,8 +254,8 @@ export default async function ProductsPage({
 
         {products.items.length ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {products.items.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.items.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
         ) : (
@@ -271,5 +274,17 @@ export default async function ProductsPage({
         />
       </section>
     </div>
+  );
+}
+
+export default function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  return (
+    <Suspense fallback={<LoadingSkeleton count={9} />}>
+      <ProductsPageContent searchParams={searchParams} />
+    </Suspense>
   );
 }

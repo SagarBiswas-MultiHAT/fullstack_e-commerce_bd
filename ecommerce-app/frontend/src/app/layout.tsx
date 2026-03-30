@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { AppProviders } from "@/context/providers";
 import "./globals.css";
 
+export { reportWebVitals } from './web-vitals';
+
 const bodyFont = DM_Sans({
   variable: "--font-body",
   subsets: ["latin"],
@@ -44,4 +46,3 @@ export default function RootLayout({
     </html>
   );
 }
-<body className="min-h-full bg-bg text-fg" suppressHydrationWarning></body>

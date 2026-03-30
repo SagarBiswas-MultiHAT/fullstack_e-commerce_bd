@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +7,7 @@ import { AdminLoginDto } from './dto/admin-login.dto';
 
 @Injectable()
 export class AdminAuthService {
+  private readonly logger = new Logger(AdminAuthService.name);
   private totpSecret: string | null = null;
 
   constructor(
@@ -23,11 +24,13 @@ export class AdminAuthService {
     }
 
     if (dto.email.toLowerCase() !== adminEmail.toLowerCase()) {
+      this.logger.warn(`Admin login failed for unknown email: ${dto.email.toLowerCase()}`);
       throw new UnauthorizedException('Invalid admin credentials');
     }
 
     const passwordValid = await bcrypt.compare(dto.password, adminPasswordHash);
     if (!passwordValid) {
+      this.logger.warn(`Admin login failed for configured email: ${adminEmail.toLowerCase()}`);
       throw new UnauthorizedException('Invalid admin credentials');
     }
 
@@ -47,6 +50,7 @@ export class AdminAuthService {
     }
 
     if (!dto.totpCode) {
+      this.logger.warn(`Admin login rejected (missing TOTP): ${adminEmail.toLowerCase()}`);
       throw new UnauthorizedException('TOTP code is required');
     }
 
@@ -56,6 +60,7 @@ export class AdminAuthService {
     });
 
     if (!verification.valid) {
+      this.logger.warn(`Admin login failed (invalid TOTP): ${adminEmail.toLowerCase()}`);
       throw new UnauthorizedException('Invalid TOTP code');
     }
 

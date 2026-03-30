@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { AccountClient } from './AccountClient';
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -20,7 +21,7 @@ export default async function AccountPage({
   const initialTab = readTab(params.tab);
 
   return (
-    <Suspense fallback={<p className="py-10 text-sm text-muted">Loading account...</p>}>
+    <Suspense fallback={<LoadingSkeleton count={4} />}>
       <AccountClient initialTab={initialTab} />
     </Suspense>
   );

@@ -11,6 +11,7 @@ import type { Product } from '@/lib/types';
 
 interface ProductCardProps {
   product: Product;
+  priority?: boolean;
 }
 
 function productRating(product: Product) {
@@ -26,7 +27,7 @@ function productRating(product: Product) {
   };
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   const { addItem } = useCart();
   const [isWishlisted, setWishlisted] = useState(false);
   const { rating, count } = useMemo(() => productRating(product), [product]);
@@ -41,7 +42,8 @@ export function ProductCard({ product }: ProductCardProps) {
             width={600}
             height={480}
             className="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
-            loading="lazy"
+            priority={priority}
+            loading={priority ? 'eager' : 'lazy'}
           />
         </Link>
         <button

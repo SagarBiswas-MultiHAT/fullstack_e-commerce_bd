@@ -1,8 +1,10 @@
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { ProductDetailClient } from '@/components/ProductDetailClient';
 import { getProductBySlug, getProductReviews, getProducts } from '@/lib/store-data';
 
-export default async function ProductDetailPage({
+async function ProductDetailContent({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -35,4 +37,16 @@ export default async function ProductDetailPage({
   };
 
   return <ProductDetailClient product={mergedProduct} relatedProducts={relatedProducts} />;
+}
+
+export default function ProductDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<LoadingSkeleton count={4} />}>
+      <ProductDetailContent params={params} />
+    </Suspense>
+  );
 }

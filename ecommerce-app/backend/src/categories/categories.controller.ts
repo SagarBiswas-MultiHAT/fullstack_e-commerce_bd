@@ -9,8 +9,13 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { CacheTTL } from '@nestjs/cache-manager';
+import { Throttle } from '@nestjs/throttler';
 import { AdminJwtGuard } from '../common/guards/admin-jwt.guard';
+import { IpWhitelistGuard } from '../common/guards/ip-whitelist.guard';
+import { CacheKeyInterceptor } from '../common/interceptors/cache-key.interceptor';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -20,6 +25,8 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('store/categories')
+  @UseInterceptors(CacheKeyInterceptor)
+  @CacheTTL(3600)
   getCategoryTree(): Promise<unknown> {
     return this.categoriesService.getCategoryTree();
   }
@@ -34,13 +41,15 @@ export class CategoriesController {
   }
 
   @Post('admin/categories')
-  @UseGuards(AdminJwtGuard)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
   createCategory(@Body() dto: CreateCategoryDto) {
     return this.categoriesService.createCategory(dto);
   }
 
   @Put('admin/categories/:id')
-  @UseGuards(AdminJwtGuard)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
   updateCategory(@Param('id', new ParseUUIDPipe()) id: string, @Body() dto: UpdateCategoryDto) {
     return this.categoriesService.updateCategory(id, dto);
   }

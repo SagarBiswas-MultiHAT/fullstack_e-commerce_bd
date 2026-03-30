@@ -10,9 +10,11 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { AdminJwtGuard } from '../common/guards/admin-jwt.guard';
 import { CustomerJwtGuard } from '../common/guards/customer-jwt.guard';
+import { IpWhitelistGuard } from '../common/guards/ip-whitelist.guard';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { ReviewQueryDto } from './dto/review-query.dto';
 import { ReviewsService } from './reviews.service';
@@ -40,7 +42,8 @@ export class ReviewsController {
   }
 
   @Delete('admin/reviews/:id')
-  @UseGuards(AdminJwtGuard)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  @UseGuards(AdminJwtGuard, IpWhitelistGuard)
   deleteReview(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.reviewsService.deleteReview(id);
   }
