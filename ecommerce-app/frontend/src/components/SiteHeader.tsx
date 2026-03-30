@@ -28,7 +28,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-outline/80 bg-bg/90 backdrop-blur-lg">
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 lg:px-6">
+      <div className="mx-auto flex w-[85%] items-center gap-3 px-4 py-3 lg:px-6">
         <Link href="/" className="shrink-0 rounded-xl px-2 py-1 transition hover:bg-bg-elevated">
           <p className="font-display text-xl font-semibold text-fg">
             Bazaar<span className="text-brand">Flow</span>
@@ -121,7 +121,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="mx-auto block w-full max-w-7xl px-4 pb-3 md:hidden lg:px-6">
+      <div className="mx-auto block w-[85%] px-4 pb-3 md:hidden lg:px-6">
         <SearchBar defaultValue={pathname.startsWith('/search') ? '' : ''} />
       </div>
     </header>
